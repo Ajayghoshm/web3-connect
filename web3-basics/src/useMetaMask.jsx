@@ -16,11 +16,11 @@ const networkOptions = [
     },
   },
   {
-    label: "etheruemsd",
-    value: 4,
+    label: "rinkeby",
+    chainId: 4,
     options: {
-      rpc_url: "https://polygon-rpc.com",
-      currency: "MATIC",
+      rpc_url: "https://rinkeby.infura.io/v3/",
+      currency: "ETH",
       Explorer: " https://polygonscan.com/",
     },
   },
@@ -72,16 +72,19 @@ const UseWeb3Connect = () => {
       return item.chainId === selectedChainId;
     });
 
-    const currentChainId = await web3.eth.net.getId();
+    console.debug("selected chain", selectedChain);
 
-    if (currentChainId !== selectedChain.value) {
-      try {
-        if (selectedChain.value === 0) return;
-        // await window?.ethereum?.request({
-        //   method: "wallet_switchEthereumChain",
-        //   params: [{ chainId: Web3.utils.toHex(selectedChain.value) }],
-        // });
-        console.debug("select", selectedChain, currentChainId);
+    const currentChainId = await web3.eth.net.getId();
+    try {
+      if (selectedChain.chainId === 0) return;
+      await window?.ethereum?.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: Web3.utils.toHex(selectedChain.chainId) }],
+      });
+      console.debug("select", selectedChain, currentChainId);
+    } catch (e) {
+      console.debug("switch error", e);
+      if (e.code === 4902) {
         await web3.currentProvider.request({
           method: "wallet_addEthereumChain",
           params: [
@@ -94,17 +97,30 @@ const UseWeb3Connect = () => {
             },
           ],
         });
-      } catch (e) {
-        console.debug("switch error", e);
       }
     }
+  };
+
+  const sendTransaction = (item, amount) => {
+    console.debug("values", item, amount);
+    web3.eth.sendTransaction({
+      from: currentAccountState,
+      to: item.address,
+      value: web3.utils.toWei(amount.toString(), "ether"),
+    });
   };
 
   useEffect(() => {
     onWeb3Connect();
   }, []);
 
-  return [currentAccountState, currentBalance, currentNetwork, onswitchNetwork];
+  return [
+    currentAccountState,
+    currentBalance,
+    currentNetwork,
+    onswitchNetwork,
+    sendTransaction,
+  ];
 };
 
 export default UseWeb3Connect;

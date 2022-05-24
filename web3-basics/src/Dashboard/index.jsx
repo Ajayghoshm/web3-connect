@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import UseWeb3Connect from "../useMetaMask";
 import Select from "react-select";
+import Contact from "./Contact";
 
 const networkOptions = [
   {
@@ -8,7 +9,7 @@ const networkOptions = [
     value: 137,
   },
   {
-    label: "etheruemsd",
+    label: "Rinkby",
     value: 4,
   },
 ];
@@ -16,8 +17,13 @@ const networkOptions = [
 const Dashboard = () => {
   const [selectedChain, setSelectedChain] = useState();
 
-  const [currentAccount, currentBalance, currentNetwork, onswitchNetwork] =
-    UseWeb3Connect();
+  const [
+    currentAccount,
+    currentBalance,
+    currentNetwork,
+    onswitchNetwork,
+    sendTransaction,
+  ] = UseWeb3Connect();
 
   console.debug(
     "currentAccount",
@@ -40,6 +46,7 @@ const Dashboard = () => {
       <button onClick={(e) => onswitchNetwork(selectedChain.value)}>
         Switch Network
       </button>
+      <Contact sendTransaction={sendTransaction} />
     </div>
   );
 };
