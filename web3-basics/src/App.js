@@ -1,8 +1,6 @@
-import logo from "./logo.svg";
 import "./App.css";
 import Dashboard from "./Dashboard";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Contact from "./Dashboard/Contact";
+import { BrowserRouter } from "react-router-dom";
 
 function App() {
   return (

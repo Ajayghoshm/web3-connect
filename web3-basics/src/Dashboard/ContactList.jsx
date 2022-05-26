@@ -12,36 +12,44 @@ const ContactList = ({ contactList, sendTransaction, getTransactionList }) => {
     setTransactionList(value);
   };
   return (
-    <div className="flex flex-col items-center justify-center">
-      {contactList.map((item) => {
-        return (
-          <div
-            key={item.address}
-            className="flex items-center justify-center space-x-4 space-y-4"
-          >
-            <div className="font-bold w-28">{item.name}</div>
-            <div className="font-mono">{item.address}</div>
-            <button
-              className="p-5 text-white bg-blue-500 rounded-lg"
-              onClick={() => {
-                sendTransaction(item, 0.0001);
-              }}
-            >
-              Send Money
-            </button>
-            <button
-              className="p-5 text-white bg-blue-500 rounded-lg"
-              onClick={() => {
-                onTransactionView(item.address);
-              }}
-            >
-              View Transactions
-            </button>
-          </div>
-        );
-      })}
+    <div className="flex flex-col items-center justify-center pt-10">
+      <table>
+        <thead>
+          <th>Name</th>
+          <th>Address</th>
+          <th>Actions</th>
+        </thead>
+        <tbody>
+          {contactList.map((item) => {
+            return (
+              <tr key={item.address} className="p-2">
+                <td className="p-2 font-bold">{item.name}</td>
+                <td className="p-2 font-mono">{item.address}</td>
+                <td className="p-2 space-x-2">
+                  <button
+                    className="p-5 text-white bg-blue-500 rounded-lg"
+                    onClick={() => {
+                      sendTransaction(item, 0.0001);
+                    }}
+                  >
+                    Send Money
+                  </button>
+                  <button
+                    className="p-5 text-white bg-blue-500 rounded-lg"
+                    onClick={() => {
+                      onTransactionView(item.address);
+                    }}
+                  >
+                    View Transactions
+                  </button>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
       <button
-        className="p-5 text-white bg-blue-500 rounded-lg"
+        className="p-5 m-2 text-white bg-blue-500 rounded-lg"
         onClick={() => onAddContact()}
       >
         Add Contact

@@ -6,7 +6,7 @@ const NewContact = ({ onContactSubmit }) => {
     address: "",
   });
   return (
-    <div>
+    <div className="py-4">
       <h1 className="text-3xl">Add new contact</h1>
       <div className="flex flex-col items-center justify-center m-4 space-y-3">
         <div className="flex space-x-2 ">
