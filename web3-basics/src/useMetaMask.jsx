@@ -93,12 +93,57 @@ const UseWeb3Connect = () => {
               chainName: selectedChain.label,
               nativeCurrency: selectedChain.options.nativeCurrency,
               rpcUrls: [selectedChain.options.rpc_url],
-              // blockExplorerUrls: [selectedChain.options.Explorer],
             },
           ],
         });
       }
     }
+    onWeb3Connect();
+  };
+
+  async function getTransactionsByAccount(
+    myaccount,
+    startBlockNumber,
+    endBlockNumber
+  ) {
+    if (endBlockNumber == null) {
+      endBlockNumber = await web3.eth.getBlockNumber();
+      console.log("Using endBlockNumber: " + endBlockNumber);
+    }
+    if (startBlockNumber == null) {
+      startBlockNumber = endBlockNumber - 20;
+      console.log("Using startBlockNumber: " + startBlockNumber);
+    }
+    console.log(
+      'Searching for transactions to/from account "' +
+        myaccount +
+        '" within blocks ' +
+        startBlockNumber +
+        " and " +
+        endBlockNumber
+    );
+    let transList = [];
+    for (var i = startBlockNumber; i <= endBlockNumber; i++) {
+      console.log("Searching block " + i);
+      var block = await web3.eth.getBlock(i, true);
+      if (block != null && block.transactions != null) {
+        console.log("block", block);
+        let filter = block.transactions.filter((item) => {
+          return (
+            (item.from && item.from.toLowerCase() === myaccount) ||
+            (item.to && item.to.toLowerCase() === myaccount)
+          );
+        });
+        console.debug("newfilter", filter);
+        if (filter.length) transList.push(filter);
+      }
+      console.debug("transList", transList);
+    }
+    return transList.flat();
+  }
+
+  const getTransactionList = async (address) => {
+    return await getTransactionsByAccount(address.toLowerCase());
   };
 
   const sendTransaction = (item, amount) => {
@@ -120,6 +165,7 @@ const UseWeb3Connect = () => {
     currentNetwork,
     onswitchNetwork,
     sendTransaction,
+    getTransactionList,
   ];
 };
 

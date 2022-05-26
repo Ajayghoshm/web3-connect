@@ -1,10 +1,10 @@
 import { useState } from "react";
+import { Route, Routes, useNavigate } from "react-router-dom";
+import ContactList from "./ContactList";
+import NewContact from "./NewContact";
 
-const Contact = ({ sendTransaction }) => {
-  const [selectedContact, setSelectedContact] = useState({
-    name: "",
-    address: "",
-  });
+const Contact = ({ sendTransaction, getTransactionList }) => {
+  const history = useNavigate();
   const [contactList, setContactList] = useState([
     {
       name: "Ajayghosh",
@@ -16,54 +16,29 @@ const Contact = ({ sendTransaction }) => {
     },
   ]);
 
-  const onContactSubmit = () => {
+  const onContactSubmit = (selectedContact) => {
     setContactList((state) => [...state, selectedContact]);
+    history("/contacts/list");
   };
 
   return (
     <div>
-      {contactList.map((item) => {
-        return (
-          <div key={item.address} className="flex">
-            <div className="">{item.name}</div>
-            <div>{item.address}</div>
-            <button
-              onClick={() => {
-                sendTransaction(item, 1);
-              }}
-            >
-              Send Money
-            </button>
-          </div>
-        );
-      })}
-      <div>
-        <input
-          value={selectedContact.name}
-          onChange={(e) => {
-            e.preventDefault();
-            setSelectedContact((state) => ({ ...state, name: e.target.value }));
-          }}
+      <Routes>
+        <Route
+          path="/list"
+          element={
+            <ContactList
+              contactList={contactList}
+              getTransactionList={getTransactionList}
+              sendTransaction={sendTransaction}
+            />
+          }
         />
-        <input
-          value={selectedContact.address}
-          onChange={(e) => {
-            e.preventDefault();
-            setSelectedContact((state) => ({
-              ...state,
-              address: e.target.value,
-            }));
-          }}
+        <Route
+          path="/new"
+          element={<NewContact onContactSubmit={onContactSubmit} />}
         />
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            onContactSubmit();
-          }}
-        >
-          add new contact
-        </button>
-      </div>
+      </Routes>
     </div>
   );
 };

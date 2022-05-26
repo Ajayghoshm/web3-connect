@@ -2,20 +2,17 @@ import React, { useEffect, useState } from "react";
 import UseWeb3Connect from "../useMetaMask";
 import Select from "react-select";
 import Contact from "./Contact";
-
-const networkOptions = [
-  {
-    label: "Polygon Mainnet",
-    value: 137,
-  },
-  {
-    label: "Rinkby",
-    value: 4,
-  },
-];
+import {
+  BrowserRouter,
+  Link,
+  Route,
+  Routes,
+  useNavigate,
+} from "react-router-dom";
+import Details from "./Details";
 
 const Dashboard = () => {
-  const [selectedChain, setSelectedChain] = useState();
+  const history = useNavigate();
 
   const [
     currentAccount,
@@ -23,6 +20,7 @@ const Dashboard = () => {
     currentNetwork,
     onswitchNetwork,
     sendTransaction,
+    getTransactionList,
   ] = UseWeb3Connect();
 
   console.debug(
@@ -32,22 +30,34 @@ const Dashboard = () => {
     currentNetwork
   );
 
+  const onContactsClick = () => {
+    history("/contacts/list");
+  };
+
   return (
-    <div>
-      Dashboard
-      <div>{currentAccount}</div>
-      <div>{currentBalance}</div>
-      <div>{currentNetwork}</div>
-      <Select
-        options={networkOptions}
-        value={selectedChain}
-        onChange={(e) => setSelectedChain(e)}
+    <Routes>
+      <Route
+        index
+        element={
+          <Details
+            currentAccount={currentAccount}
+            currentBalance={currentBalance}
+            currentNetwork={currentNetwork}
+            onContactsClick={onContactsClick}
+            onswitchNetwork={onswitchNetwork}
+          />
+        }
       />
-      <button onClick={(e) => onswitchNetwork(selectedChain.value)}>
-        Switch Network
-      </button>
-      <Contact sendTransaction={sendTransaction} />
-    </div>
+      <Route
+        path="/contacts/*"
+        element={
+          <Contact
+            sendTransaction={sendTransaction}
+            getTransactionList={getTransactionList}
+          />
+        }
+      />
+    </Routes>
   );
 };
 
